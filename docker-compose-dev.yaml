@@ -8,4 +8,10 @@ services:
       context: ./
       dockerfile: Dockerfile.dev
     ports:
-      - 3000:3000
+      - ${TODO_APP_PORT}:3000
+    volumes:
+      - ./:/usr/todo-app
+      - /usr/todo-app/node_modules
+      - /user/todo-app/.next
+    env_file:
+      - ./.env

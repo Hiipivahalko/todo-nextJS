@@ -1,16 +1,10 @@
 FROM node:17-alpine
+WORKDIR /usr/todo-app
 
-COPY package.json ./
+COPY package.json .
+
 RUN npm install
 
 COPY . .
-
-
-ENV NODE_ENV development
-
-RUN addgroup -g 1001 -S nodejs
-RUN adduser -S nextjs -u 1001
-
-USER nextjs
 
 CMD ["npm", "run", "dev"]

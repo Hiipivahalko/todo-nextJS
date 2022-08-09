@@ -1,18 +1,33 @@
+# building image
+FROM node:17-alpine AS BUILD
 
-FROM node:17-alpine
+WORKDIR /usr/todo-app
 
+# build dependencies
 COPY package.json ./
 RUN npm install
 
 COPY . .
 RUN npm run build
 
+# production image
+FROM node:17-alpine AS RUNNER
+
+WORKDIR /usr/todo-app
 
 ENV NODE_ENV production
 
 RUN addgroup -g 1001 -S nodejs
 RUN adduser -S nextjs -u 1001
 
+COPY --from=BUILD /usr/todo-app/public ./public
+COPY --from=BUILD /usr/todo-app/package.json ./package.json
+COPY --from=BUILD /usr/todo-app/node_modules ./node_modules
+COPY --from=BUILD --chown=nextjs:nodejs /usr/todo-app/.next ./.next
+
+
 USER nextjs
+
+
 
 CMD ["npm", "run", "start"]
